@@ -9,6 +9,7 @@
     "start": "node dist/index.js",
     "seed:manus": "tsx seed/seed-manus.ts",
     "seed:employees": "tsx seed/seed-movement-employees.ts",
+    "seed:skntheory": "tsx seed/seed-skntheory-employees.ts",
     "test": "vitest run"
   },
   "dependencies": {
