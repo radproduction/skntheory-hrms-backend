@@ -1,7 +1,6 @@
 import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
-import path from "node:path";
 import cors from "cors";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { appRouter } from "../routers";
@@ -9,6 +8,7 @@ import { createContext } from "./context";
 import avatarUploadRouter from "../avatar-upload";
 import employeeDocumentUploadRouter from "../employee-document-upload";
 import { connectToMongoDB } from "../mongodb";
+import { UPLOADS_DIR } from "../storage";
 import { initRealtime } from "./realtime";
 
 async function startServer() {
@@ -30,8 +30,7 @@ async function startServer() {
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // Serve uploaded files
-  const uploadsDir = path.resolve(import.meta.dirname, "..", "uploads");
-  app.use("/uploads", express.static(uploadsDir));
+  app.use("/uploads", express.static(UPLOADS_DIR));
   // Avatar upload endpoint
   app.use(avatarUploadRouter);
   // Employee document upload endpoint

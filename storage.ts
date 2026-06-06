@@ -1,7 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import type { Request } from "express";
 
-const UPLOADS_DIR = path.resolve(import.meta.dirname, "uploads");
+export const UPLOADS_DIR = path.resolve(import.meta.dirname, "uploads");
 
 function normalizeKey(relKey: string): string {
   return relKey.replace(/^\/+/, "").replace(/\\/g, "/");
@@ -36,4 +37,22 @@ export async function storageGet(
 ): Promise<{ key: string; url: string }> {
   const key = normalizeKey(relKey);
   return { key, url: `/uploads/${key}` };
+}
+
+export function storagePublicUrl(req: Request, url: string): string {
+  if (/^https?:\/\//i.test(url)) return url;
+
+  const configuredBaseUrl = process.env.PUBLIC_API_URL?.trim();
+  const railwayDomain = process.env.RAILWAY_PUBLIC_DOMAIN?.trim();
+  const forwardedHost = req.headers["x-forwarded-host"];
+  const forwardedProto = req.headers["x-forwarded-proto"];
+
+  const baseUrl =
+    configuredBaseUrl ||
+    (railwayDomain ? `https://${railwayDomain}` : undefined) ||
+    `${Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto || req.protocol}://${
+      Array.isArray(forwardedHost) ? forwardedHost[0] : forwardedHost || req.headers.host
+    }`;
+
+  return `${baseUrl.replace(/\/+$/, "")}/${url.replace(/^\/+/, "")}`;
 }

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { storagePut } from "./storage";
+import { storagePublicUrl, storagePut } from "./storage";
 import { authenticateRequest } from "./_core/auth";
 
 const router = Router();
@@ -38,7 +38,7 @@ router.post("/api/upload-avatar", upload.single("file"), async (req, res) => {
     // Upload to S3
     const { url } = await storagePut(fileName, req.file.buffer, req.file.mimetype);
 
-    res.json({ url });
+    res.json({ url: storagePublicUrl(req, url) });
   } catch (error) {
     console.error("Avatar upload error:", error);
     res.status(500).json({ error: "Failed to upload avatar" });
