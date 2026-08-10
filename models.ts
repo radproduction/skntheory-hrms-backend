@@ -400,7 +400,7 @@ const notificationSchema = new Schema<INotification>({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   type: { 
     type: String, 
-    enum: ['project_assigned', 'attendance_issue', 'hours_shortfall', 'leave_approved', 'leave_rejected', 'announcement', 'system_alert'], 
+    enum: ['project_assigned', 'attendance_issue', 'hours_shortfall', 'leave_approved', 'leave_rejected', 'announcement', 'task_assigned', 'system_alert'], 
     required: true 
   },
   title: { type: String, required: true },
