@@ -2,7 +2,20 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import type { Request } from "express";
 
-export const UPLOADS_DIR = path.resolve(import.meta.dirname, "uploads");
+/**
+ * Single source of truth for where uploads live. Both the writer (storagePut)
+ * and the static file server import this.
+ *
+ * It must NOT be derived from import.meta.dirname: the production build bundles
+ * this file into dist/index.js, so import.meta.dirname resolves to dist/ rather
+ * than the backend directory, and uploads land somewhere nobody serves from.
+ *
+ * Set UPLOADS_DIR to a directory outside the checkout in production, otherwise
+ * employee documents sit inside the code tree where a deploy can wipe them.
+ */
+export const UPLOADS_DIR = process.env.UPLOADS_DIR
+  ? path.resolve(process.env.UPLOADS_DIR)
+  : path.resolve(process.cwd(), "uploads");
 
 function normalizeKey(relKey: string): string {
   return relKey.replace(/^\/+/, "").replace(/\\/g, "/");
