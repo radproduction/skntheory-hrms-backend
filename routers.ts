@@ -1,6 +1,7 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
+import { fpbRouter } from "./fpbRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
@@ -12,6 +13,7 @@ import { emitChatMessage, emitNotification, emitAnnouncement } from "./_core/rea
 
 export const appRouter = router({
   system: systemRouter,
+  fpb: fpbRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
